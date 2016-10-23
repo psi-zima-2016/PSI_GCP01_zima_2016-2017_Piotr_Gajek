@@ -7,7 +7,8 @@ Autor: Piotr Gajek
 
 Prowadzący: Grzegorz Górecki
 
-   1.Sztuczny neuron – idea, budowa, model McCulloch-Pitts, perceptron (działanie, klasyfikacja z wykorzystaniem perceptronu), uczenie (perceptronu i dowolnego neuronu), zastosowanie, przykłady (proste układy funkcji logicznych) - na podstawie klasyfikacji punktów przez perceptro oraz bramek logicznych
+   1.Sztuczny neuron – idea, budowa, model McCulloch-Pitts, perceptron (działanie, klasyfikacja z wykorzystaniem perceptronu), uczenie (perceptronu i dowolnego neuronu), zastosowanie, przykłady (proste układy funkcji logicznych)
+- na podstawie klasyfikacji punktów przez perceptron oraz bramek logicznych
    
    2.Sztuczna sieć neuronowa – architektura (sieć jedno- i wielo- warstwowa), uczenie (reguła delta, algorytm wstecznej propagacji błędu), zastosowanie, przykłady realizacji prostych układów logicznych, praktyczne uwagi uczenia sieci, problemy uczenia sieci
 
