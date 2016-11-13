@@ -1,0 +1,7 @@
+x=0:0.01:100;
+y=x.^2;
+net=newff(minmax(x),[24 1],{'logsig','purelin'},'trainlm');
+net.trainparam.epochs=9000;
+net.trainparam.goal=1e-5;
+net.trainparam.lr=0.01;
+net=train(net,x,y);
