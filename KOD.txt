@@ -1,0 +1,27 @@
+x = simplecluster_dataset;
+net = selforgmap([8 8]);
+net.trainParam.epochs = 100000;
+net = train(net,x);
+view(net)
+y = net(x);
+classes = vec2ind(y);
+
+
+ close all;
+clear all;
+% circle
+r=1; % radius
+C=[1 1];
+theta=0:2*pi/360:2*pi; % the angle
+m=r*[cos(theta')+C(1) sin(theta')+C(2)]; % the points you asked
+plot(m(:,1), m(:,2))
+axis equal
+hold all
+
+% Rectangle
+a=1; % side a
+b=.5; % side b
+s=[0.5 0.75]; % bottom left start point
+A=[s(1) s(1)+a s(1)+a s(1) s(1);s(2) s(2) s(2)+b s(2)+b s(2)];
+plot(A(1,:), A(2,:))
+axis equal
