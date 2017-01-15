@@ -15,6 +15,12 @@ public class Hebb
 	public static double n = 0.1;
 	public static Scanner odczyt;
 	public static int count = 350;
+	double globalError = 0;
+ 	double localError = 0;
+ 	double MSE = 0;
+ 	double MAPE = 0; 
+ 	double pom = 0;
+ 	int iter = 0; 
 	
 	public Hebb()
 	{
@@ -37,7 +43,8 @@ public class Hebb
 		while(odczyt.hasNextDouble())
 		{	
 				p[apt][0]=odczyt.nextDouble();
-				p[apt][1]=odczyt.nextDouble();				
+				p[apt][1]=odczyt.nextDouble();	
+				a[apt]=1;
 				apt++;
 		}
 	}
@@ -57,16 +64,17 @@ public class Hebb
 		return suma;
 	}
 	
-	public static void learn() 
- 	{							
+	public static void learn() throws FileNotFoundException 
+ 	{	
+			PrintWriter zapis = new PrintWriter("wagi.txt");
+			PrintWriter zapis2 = new PrintWriter("blad.txt");
 	 	double globalError = 0;
 	 	double localError = 0;
 	 	double MSE = 0;
 	 	double MAPE = 0; 
 	 	double pom = 0;
 	 	int iter = 0; 
- 			long start=System.currentTimeMillis();
- 			
+ 		long start=System.currentTimeMillis();
  		do{
  			globalError=0;
  			iter++;
@@ -76,36 +84,47 @@ public class Hebb
  				
  				a[i]=count(p[i][0],p[i][1]);
  				//System.out.println("["+w[0]+" "+w[1]+"]"+ " + " + "["+c[0]+ " "+c[1] +"] * "+ a[k] + " * ["+ p[k][0]+" "+p[k][1] + "] " ); 
- 				System.out.println("["+w[0]+" "+w[1]+"]"+  " ["+ p[i][0]+" "+p[i][1] + "] " + " -> "+ a[i] ); 
+ 				//System.out.println("["+w[0]+" "+w[1]+"]"+  " ["+ p[i][0]+" "+p[i][1] + "] " + " -> "+ a[i] ); 
  				
  				//Bez wspó³czynnika zapominania
  				w[0] = w[0] + (c[0]*a[i]*p[i][0]);
  			    w[1] = w[1] + (c[1]*a[i]*p[i][1]);
  				
  				//Ze wspó³czynnikiem zapominania
- 				//w[0] = w[0]*(1-n) + (c[0]*a[i]*p[i][0]);
- 			    //w[1] = w[1]*(1-n) + (c[1]*a[i]*p[i][1]);
+ 				//w[0] = w[0]*(0.93) + (c[0]*a[i]*p[i][0]);
+ 			    //w[1] = w[1]*(0.93) + (c[1]*a[i]*p[i][1]);
  				
  				//Regu³a Oji
- 				//w[0] = (c[0]*a[i]*(p[i][0]-a[i]*w[0]));
- 				//w[1] = (c[1]*a[i]*(p[i][1]-a[i]*w[1]));
+ 				//w[0] = w[0]+(c[0]*a[i]*(p[i][0]-a[i]*w[0]));
+ 				//w[1] = w[1]+(c[1]*a[i]*(p[i][1]-a[i]*w[1]));
  				
  				w[0]=new BigDecimal(w[0]).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
  				w[1]=new BigDecimal(w[1]).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
  				
- 				localError = pom - a[i];
+ 				localError = Math.abs(pom - a[i]);
  				globalError = globalError + (localError*localError);
+ 				zapis.println(w[0] +" "+ w[1]);
  			}	
 				MSE = Math.pow(globalError, 2)/wymiar;
-				MAPE =  (globalError * 100) / wymiar; 
+				MAPE =  (globalError*10) / wymiar; 
+				zapis2.println(MSE);
 	 			System.out.println("MSE: " + MSE + " MAPE: " + MAPE + " %");
- 			} while(globalError!=0 && iter < 10000);
+ 			} while( globalError!=0 && iter < 10000);
  			long stop=System.currentTimeMillis();
- 			System.out.println("Czas wykonania:"+(stop-start)+" ms");	
+ 			double time = stop - start;
+ 			
+ 			System.out.println("Czas wykonania:"+time+" ms");	
+ 			
 	}
 	
 	public static void testuj()
 	{
+		double globalError = 0;
+	 	double localError = 0;
+		double MSE = 0;
+	 	double MAPE = 0; 
+	 	double pom = 0;
+	 	int iter = 0; 
 		try 
 		{
 			odczyt = new Scanner(new File("walidacja.txt"));
@@ -123,16 +142,25 @@ public class Hebb
 				p2[apt][1]=odczyt.nextDouble();				
 				apt++;
 		}
-		double pom = 0;
 		System.out.println("--- Walidacja ---");
+		do{
+			globalError=0;
+ 			iter++;
 		for(int i=0;i<wymiar;i++)
 		{
-			pom=count(p2[i][0],p2[i][1]);
+			pom = a[i];
+			a[i]=count(p[i][0],p[i][1]);
 			System.out.println("["+p2[i][0]+" "+p2[i][1]+"] " + " -> " + pom);
+			localError = Math.abs(pom - a[i]);
+			globalError = globalError + (localError*localError);
 		}
+		MSE = Math.pow(globalError, 2)/wymiar;
+		MAPE =  (globalError*10) / wymiar; 
+		System.out.println("MSE: " + MSE + " MAPE: " + MAPE + " %");
+		}while(globalError!=0 && iter < 10);
 	}
 	
-	public static void main(String[] args)
+	public static void main(String[] args) throws FileNotFoundException
 		{
 			Hebb h = new Hebb();
 			h.learn();
